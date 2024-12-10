@@ -1,0 +1,4 @@
+msal
+cmd2
+argparse
+bs4
