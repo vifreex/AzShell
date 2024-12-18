@@ -1,11 +1,16 @@
 # AzShell
 
 <div align="center">
-  <img src="https://raw.githubusercontent.com/vifreex/AzShell/refs/heads/main/.github/logo.png" alt="AzShell">
+  <img src="https://raw.githubusercontent.com/vifreex/AzShell/refs/heads/main/.github/logo.png" alt="logo">
 </div>
 <br>
 
 Tool to interact with Azure through the **Microsoft Graph API (graph.microsoft.com)** and **Azure Resource Manager (ARM) (management.azure.com)**. Designed to facilitate resource enumeration and detection of misconfigurations for potential abuse in Azure environments.
+
+<div align="center">
+  <img src="https://raw.githubusercontent.com/vifreex/AzShell/refs/heads/main/.github/azshell.gif" alt="AzShell" width="740">
+</div>
+<br>
 
 ```
 usage: azshell [-h] -t TENANTID [-u UPN] [-p PASSWORD] [-c CLIENTID] [-a ACCESSTOKEN] [-r REFRESHTOKEN] [--user-agent USERAGENT] [--proxy PROXY] [--delay DELAY] [--only-graph]
@@ -153,6 +158,7 @@ AzShell has three different modules: **get**, **add** and **del**.
     mfa-phone                   add phone authentication method to a user
     exclude-user-policy         exclude a user from a policy
     vm-command                  executes commands on virtual machine
+    rbac                        assign an Azure RBAC role to a principal
 
 ### del
     app-secret                  remove a password from an existing app
@@ -168,5 +174,6 @@ AzShell has three different modules: **get**, **add** and **del**.
     service-principal           remove a service principal associated with an application
     group                       remove a group
     exclude-user-policy         removes the excluded user from a policy
+    rbac                        remove an Azure RBAC role to a principal
 
 

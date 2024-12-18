@@ -31,6 +31,8 @@ class Request:
             response = requests.post(url, headers=headers, json=body, proxies=proxies, verify=False)
         elif method == "PATCH":
             response = requests.patch(url, headers=headers, json=body, proxies=proxies, verify=False)
+        elif method == "PUT":
+            response = requests.put(url, headers=headers, json=body, proxies=proxies, verify=False)
         elif method == "DELETE":
             response = requests.delete(url, headers=headers, proxies=proxies, verify=False)
         return response

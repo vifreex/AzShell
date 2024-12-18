@@ -14,8 +14,8 @@ class Format:
 
 class Permissions:
     INTERESTING_DIRECTORY_ROLE = {
-        "62e90394-69f5-4237-9190-012177145e10": Format.BOLD_START + Format.RED + Format.YELLOW_BACK + "Global Administrator" + Format.END,
-        "9b895d92-2cd3-44c7-9d02-a6ac2d5ea5c3": Format.BOLD_START + Format.RED_BACK + "Application Administrator" + Format.END + " [add appsecret, add serviceprincipalsecret]",
+        "62e90394-69f5-4237-9190-012177145e10": f"{Format.BOLD_START}{Format.RED}{Format.YELLOW_BACK}Global Administrator{Format.END}",
+        "9b895d92-2cd3-44c7-9d02-a6ac2d5ea5c3": f"{Format.BOLD_START}{Format.RED_BACK}Application Administrator{Format.END} [add app-secret, add service-principal-secret]",
         "158c047a-c907-4556-b7ef-446551a6b5f7": "Cloud Application Administrator",
         "9360feb5-f418-4baa-8175-e2a00bac4301": "Directory Writers",
         "fdd7a751-b60b-444a-984c-02652fe8fa1c": "Groups Administrator",
@@ -36,18 +36,18 @@ class Permissions:
     }
 
     INTERESTING_APP_PERMISSIONS = {
-        "9e3f62cf-ca93-4989-b6ce-bf83c28f9fe8": Format.BOLD_START + Format.RED_BACK + "RoleManagement.ReadWrite.Directory" + Format.END + " [add rolemember]",
-        "2672f8bb-fd5e-42e0-85e1-ec764dd2614e": Format.BOLD_START + Format.RED_BACK + "Policy.ReadWrite.PermissionGrant" + Format.END,
+        "9e3f62cf-ca93-4989-b6ce-bf83c28f9fe8": f"{Format.BOLD_START}{Format.RED_BACK}RoleManagement.ReadWrite.Directory{Format.END} [add role-member]",
+        "2672f8bb-fd5e-42e0-85e1-ec764dd2614e": f"{Format.BOLD_START}{Format.RED_BACK}Policy.ReadWrite.PermissionGrant{Format.END}",
         "741f803b-c850-494e-b5df-cde7c675a1ca": "User.ReadWrite.All" + " [get users, add user, del user]",
         "c529cfca-c91b-489c-af2b-d92990b66ce6": "User.ManageIdentities.All",
-        "62a82d76-70ea-41e2-9197-370581804d09": "Group.ReadWrite.All" + " [get groups, add group, del group, add groupmember, del groupmember]",
-        "06b708a9-e830-4db3-a914-8e69da51d44f": Format.BOLD_START + Format.RED_BACK + "AppRoleAssignment.ReadWrite.All" + Format.END + " [add approleassigment]",
-        "1bfefb4e-e0b5-418b-a88f-73c46d2cc8e9": "Application.ReadWrite.All" + " [get applications, get serviceprincipals, add application, add serviceprincipal, add appsecret, add serviceprincipalsecret]",
+        "62a82d76-70ea-41e2-9197-370581804d09": "Group.ReadWrite.All" + " [get groups, add group, del group, add group-member, del group-member]",
+        "06b708a9-e830-4db3-a914-8e69da51d44f": f"{Format.BOLD_START}{Format.RED_BACK}AppRoleAssignment.ReadWrite.All{Format.END} [add app-role-assigment]",
+        "1bfefb4e-e0b5-418b-a88f-73c46d2cc8e9": "Application.ReadWrite.All" + " [get applications, get service-principals, add application, add service-principal, add app-secret, add service-principal-secret]",
         "19dbc75e-c2e2-444c-a770-ec69d8559fc7": "Directory.ReadWrite.All",
         "292d869f-3427-49a8-9dab-8c70152b74e9": "Organization.ReadWrite.All",
-        "01c0a623-fc9b-48e9-b794-0756f8e8f067": "Policy.ReadWrite.ConditionalAccess" + " [get policies, add excludeuserpolicy]",
+        "01c0a623-fc9b-48e9-b794-0756f8e8f067": "Policy.ReadWrite.ConditionalAccess" + " [get policies, add exclude-user-policy]",
         "246dd0d5-5bd0-4def-940b-0421030a5b68": "Policy.Read.All" + " [get policies]",
-        "50483e42-d915-4231-9639-7fdb7fd190e5": "UserAuthenticationMethod.ReadWrite.All" + " [get mfa, add mfaphone, del mfaphone]",
+        "50483e42-d915-4231-9639-7fdb7fd190e5": "UserAuthenticationMethod.ReadWrite.All" + " [get mfa, add mfa-phone, del mfap-hone]",
         "78145de6-330d-4800-a6ce-494ff2d33d07": "DeviceManagementApps.ReadWrite.All",
         "5b07b0dd-2377-4e44-a38d-703f09a0dc3c": "DeviceManagementManagedDevices.PrivilegedOperations.All",
         "810c84a8-4a9e-49e6-bf7d-12d183f40d01": "Mail.Read" + " [get messages]",

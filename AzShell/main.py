@@ -1,3 +1,5 @@
+# AzShell v1.2.1 - by Víctor Rodríguez (vifreex)
+
 # GENERAL IMPORTS
 import os, argparse, sys,  warnings
 from cmd2 import with_argparser, Cmd, style, Fg, Bg
@@ -34,10 +36,19 @@ example_text = '''Example:
   azshell -t example.com -u geralt@example.com
   azshell -t a21a8321-8bcc-4c65-1106-3432b1da0bb2b -c 1234df7b-efd2-113e-ca51-hdaf1ded2bas -p "DAS1~XZQ~zwd..."'''
 
-#################################
-########## AUTH PARSE ###########
-#################################
-parser_auth = argparse.ArgumentParser(epilog=example_text, formatter_class=argparse.RawDescriptionHelpFormatter)
+help_banner = "v1.2.1 - by Víctor Rodríguez (ViFreeX)\n"
+
+class BannerArgumentParser(argparse.ArgumentParser):
+    def __init__(self, *args, banner=None, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.banner = banner
+
+    def print_help(self, file=None):
+        if self.banner:
+            print(self.banner)
+        super().print_help(file)
+
+parser_auth = BannerArgumentParser(epilog=example_text, formatter_class=argparse.RawDescriptionHelpFormatter, banner=help_banner)
 parser_auth.add_argument('-t', '--tenant-id', dest='tenantid', help='tenant name or tenant id\n', required=True)
 parser_auth.add_argument('-u', '--upn', dest='upn', help='user principal name [User authentication]\n', required=False)
 parser_auth.add_argument('-p', '--password', dest='password', action='store', help='password or client secret\n', required=False)
@@ -49,7 +60,7 @@ parser_auth.add_argument('--proxy', dest='proxy', action='store', help='proxy UR
 parser_auth.add_argument('--delay', dest='delay', action='store', help='seconds delay between requests (Default: random delay)\n', required=False)
 parser_auth.add_argument('--only-graph', dest='onlygraph', action='store_true', default=False, help='API Graph authentication only\n', required=False)
 
-parser = argparse.ArgumentParser()
+parser = BannerArgumentParser()
 subparsers = parser.add_subparsers(required=True)
 
 #################################
@@ -283,6 +294,12 @@ parser_add_vmCommand.add_argument('--system', type=str, help='target OS system (
 parser_add_vmCommand.add_argument('--payloadfile', type=str, help='file with payload (Shell or PowerShell script)\n', required=True)
 parser_add_vmCommand.add_argument('--addvmcommand', type=bool, default=True, help=argparse.SUPPRESS, required=False)
 
+parser_add_rbac = subparsers_add.add_parser('rbac', help='assign an Azure RBAC role to a principal\n')
+parser_add_rbac.add_argument('--principalid', type=str, help='the object id of the principal to which the role will be assigned\n', required=True)
+parser_add_rbac.add_argument('--roledefinitionid', type=str, help='the id of the role to be assigned\n', required=True)
+parser_add_rbac.add_argument('--scope', type=str, help='the scope over which the principal will have permissions (Example: subscriptions/<subscriptionid>/resourceGroups/<resourcegroupid>)\n', required=True)
+parser_add_rbac.add_argument('--addrbac', type=bool, default=True, help=argparse.SUPPRESS, required=False)
+
 #################################
 ########### DEL PARSE ###########
 #################################
@@ -356,6 +373,11 @@ parser_del_excludeuserpolicy.add_argument('--policyid', type=str, help='policy i
 parser_del_excludeuserpolicy.add_argument('--userid', type=str, help='user id\n', required=True)
 parser_del_excludeuserpolicy.add_argument('--delexcludeuserpolicy', type=bool, default=True, help=argparse.SUPPRESS, required=False)
 
+parser_del_rbac = subparsers_del.add_parser('rbac', help='remove an Azure RBAC role to a principal\n')
+parser_del_rbac.add_argument('--roleassignmentid', type=str, help='role assignment id\n', required=True)
+parser_del_rbac.add_argument('--scope', type=str, help='the scope over which the principal had permissions and from which the role will be removed\n', required=True)
+parser_del_rbac.add_argument('--delrbac', type=bool, default=True, help=argparse.SUPPRESS, required=False)
+
 ####################################################################################################################################
 ####################################################################################################################################
 
@@ -366,16 +388,16 @@ class Commands(Cmd):
         except:
             history_file = '.azshell_history.dat'
         super().__init__(persistent_history_file=history_file)
-        self.prompt = "\n" + style("(AzShell)", fg=Fg.WHITE, bg=Bg.BLUE, bold=True) + "> "
+        self.prompt = f"\n{style('(AzShell)', fg=Fg.WHITE, bg=Bg.BLUE, bold=True)}> "
         self.hidden_commands += ['alias', 'edit', 'history', 'macro', 'py', 'run_pyscript', 'run_script', 'set', 'shell', 'shortcuts']
         ################################
         ######## AUTHENTICATION ########
         ################################
         if args_auth.clientid is None and args_auth.accesstoken is None and args_auth.upn is None and args_auth.refreshtoken is None:
-            print(Format.BOLD_START + Format.YELLOW + "\n[!] At least --upn, --clientid, --accesstoken or --refreshtoken have to be defined"  + Format.END)
+            print(f"{Format.BOLD_START}{Format.YELLOW}\n[!] At least --upn, --clientid, --accesstoken or --refreshtoken have to be defined{Format.END}")
             exit()
         elif args_auth.clientid is not None and args_auth.password is None and args_auth.upn is None and args_auth.accesstoken is None and args_auth.refreshtoken is None:
-            print(Format.BOLD_START + Format.YELLOW + "\n[!] Password is required with clientid authentication" + Format.END)
+            print(f"{Format.BOLD_START}{Format.YELLOW}\n[!] Password is required with clientid authentication{Format.END}")
             exit()
         else:
             ######## AUTHENTICATION ########
@@ -385,7 +407,7 @@ class Commands(Cmd):
                 self.auth.graph_access_token = args_auth.accesstoken
                 check = self.auth.get_msgraph_data()
                 if check != "Success":
-                    print(Format.BOLD_START + Format.RED + "\n[!] Error: [" + check + "]" + Format.END)
+                    print(f"{Format.BOLD_START}{Format.RED}\n[!] Error: [{check}]{Format.END}")
                     exit()
                 else:
                     self.auth.create_context()
@@ -394,12 +416,12 @@ class Commands(Cmd):
                 if self.auth.graph_access_token is None:
                     self.auth.request_token("graph")
                 else:
-                    print(Format.BOLD_START + Format.GREEN + "\n[+] Using cached Graph access token" + Format.END)
+                    print(f"{Format.BOLD_START}{Format.GREEN}\n[+] Using cached Graph access token{Format.END}")
                 if not args_auth.onlygraph:
                     if self.auth.arm_access_token is None:
                         self.auth.request_token("arm")
                     else:
-                        print(Format.BOLD_START + Format.GREEN + "\n[+] Using cached ARM access token" + Format.END)
+                        print(f"{Format.BOLD_START}{Format.GREEN}\n[+] Using cached ARM access token{Format.END}")
                 self.auth.create_context()
                 self.auth.check_context()
                 
@@ -409,7 +431,7 @@ class Commands(Cmd):
         """get module [privesc, users, groups, ...]"""
         self.auth.cache_tokendata()
         if self.auth.graph_access_token is None:
-            print(Format.BOLD_START + Format.RED + "\n[!] Error: [it has not been possible to update the access token]" + Format.END)
+            print(f"{Format.BOLD_START}{Format.RED}\n[!] Error: [it has not been possible to update the access token{Format.END}")
             exit()
         if "getprivesc" in opts:
             if not opts.onlyroles and not opts.onlyapps and not opts.onlygroups:
@@ -499,7 +521,7 @@ class Commands(Cmd):
         """add module [app-secret, application, service-principal, ...]"""
         self.auth.cache_tokendata()
         if self.auth.graph_access_token is None:
-            print(Format.BOLD_START + Format.RED + "\n[!] Error: [it has not been possible to update the access token]" + Format.END)
+            print(f"{Format.BOLD_START}{Format.RED}\n[!] Error: [it has not been possible to update the access token]{Format.END}")
             exit()
         if "addappsecret" in opts:
             applications = Applications(self.auth, self.request, None, None)
@@ -552,6 +574,9 @@ class Commands(Cmd):
         elif "addvmcommand" in opts:
             vms = VMs(self.auth, self.request, None)
             vms.add_vmcommand(opts.subscriptionid, opts.resourcegroup, opts.vmname, opts.system, opts.payloadfile)
+        elif "addrbac" in opts:
+            roles = Roles(self.auth, self.request)
+            roles.add_rbac(opts.principalid, opts.roledefinitionid, opts.scope)
 
     ######## DEL ########
     @with_argparser(parser_del)
@@ -559,7 +584,7 @@ class Commands(Cmd):
         """del module [app-secret, message, role-member, ...]"""
         self.auth.cache_tokendata()
         if self.auth.graph_access_token is None:
-            print(Format.BOLD_START + Format.RED + "\n[!] Error: [it has not been possible to update the access token]" + Format.END)
+            print(f"{Format.BOLD_START}{Format.RED}\n[!] Error: [it has not been possible to update the access token]{Format.END}")
             exit()
         if "delappsecret" in opts:
             applications = Applications(self.auth, self.request, None, None)
@@ -603,6 +628,9 @@ class Commands(Cmd):
         elif "delexcludeuserpolicy" in opts:
             policies = Policies(self.auth, self.request, None, None)
             policies.del_excludeuserpolicy(opts.policyid,opts.userid)
+        elif "delrbac" in opts:
+            roles = Roles(self.auth, self.request)
+            roles.del_rbac(opts.roleassignmentid, opts.scope)
 
 def main():
     args_auth = parser_auth.parse_args()
