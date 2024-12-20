@@ -13,10 +13,10 @@ class VMs():
         if response.status_code == 200:
             publicip_data = json.loads(response.content.decode('utf-8'))
             if "ipAddress" in publicip_data["properties"].keys():
-                print(f"{Format.PURPLE}  [publicIPAddress]: {Format.END} {str(publicip_data['properties']['ipAddress'])}")
+                print(f"{Format.PURPLE}  [publicIPAddress]: {Format.END}{str(publicip_data['properties']['ipAddress'])}")
             if "dnsSettings" in publicip_data["properties"].keys():
                 if "fqdn" in publicip_data["properties"]["dnsSettings"].keys():
-                    print(f"{Format.PURPLE}  [FQDN]: {Format.END} {str(publicip_data['properties']['dnsSettings']['fqdn'])}")
+                    print(f"{Format.PURPLE}  [FQDN]: {Format.END}{str(publicip_data['properties']['dnsSettings']['fqdn'])}")
         elif response.status_code == 403:
             print(f"{Format.BOLD_START}{Format.RED}\n  [!] Insufficient privileges to complete the operation{Format.END}")
         elif response.status_code == 401:
@@ -34,7 +34,7 @@ class VMs():
             instanceview_data = json.loads(response.content.decode('utf-8'))
             for status in instanceview_data["statuses"]:
                 if "PowerState" in status["code"]:
-                    print(f"{Format.CYAN} Status: {Format.END} {status['displayStatus']}")
+                    print(f"{Format.CYAN} Status: {Format.END}{status['displayStatus']}")
         elif response.status_code == 403:
             print(f"{Format.BOLD_START}{Format.RED}\n  [!] Insufficient privileges to complete the operation{Format.END}")
         elif response.status_code == 401:
@@ -51,9 +51,9 @@ class VMs():
         if response.status_code == 200:
             networkinterface_data = json.loads(response.content.decode('utf-8'))
             for ipConfigurations in networkinterface_data["properties"]["ipConfigurations"]:
-                print(f"{Format.CYAN} NetworkInterface: {Format.END} {str(ipConfigurations['name'])}")
+                print(f"{Format.CYAN} NetworkInterface: {Format.END}{str(ipConfigurations['name'])}")
                 if "privateIPAddress" in ipConfigurations["properties"].keys():
-                    print(f"{Format.PURPLE}  [privateIPAddress]: {Format.END} {str(ipConfigurations['properties']['privateIPAddress'])}")
+                    print(f"{Format.PURPLE}  [privateIPAddress]: {Format.END}{str(ipConfigurations['properties']['privateIPAddress'])}")
                 if "publicIPAddress" in ipConfigurations["properties"].keys():
                     self.__get_public_ip_address(ipConfigurations["properties"]["publicIPAddress"]["id"])
         elif response.status_code == 403:
@@ -78,19 +78,19 @@ class VMs():
             if response.status_code == 200:
                 vms_data = json.loads(response.content.decode('utf-8'))
                 for vm in vms_data["value"]:
-                    print(f'\n{Format.BOLD_START}{Format.YELLOW} {vm["name"]} {Format.END}')
-                    print(f"{Format.CYAN} VirtualMachineId: {Format.END} {vm['id']}")
-                    print(f"{Format.CYAN} Type: {Format.END} {str(vm['type'])}")
+                    print(f'\n{Format.BOLD_START}{Format.YELLOW}{vm["name"]} {Format.END}')
+                    print(f"{Format.CYAN} VirtualMachineId: {Format.END}{vm['id']}")
+                    print(f"{Format.CYAN} Type: {Format.END}{str(vm['type'])}")
                     resourceGroup = re.search(r'/resourceGroups/([^/]+)/', vm["id"]).group(1)
-                    print(f"{Format.CYAN} Resource Group: {Format.END} {str(resourceGroup)}")
+                    print(f"{Format.CYAN} Resource Group: {Format.END}{str(resourceGroup)}")
                     self.__get_instanceview(vm["id"])
                     if "storageProfile" in vm["properties"].keys():
                         if "imageReference" in vm["properties"]["storageProfile"].keys():
-                            print(f"{Format.CYAN} Offer: {Format.END} {str(vm['properties']['storageProfile']['imageReference']['offer'])}")
-                            print(f"{Format.CYAN} Sku: {Format.END} {str(vm['properties']['storageProfile']['imageReference']['sku'])}")
+                            print(f"{Format.CYAN} Offer: {Format.END}{str(vm['properties']['storageProfile']['imageReference']['offer'])}")
+                            print(f"{Format.CYAN} Sku: {Format.END}{str(vm['properties']['storageProfile']['imageReference']['sku'])}")
                     if "osProfile" in vm["properties"].keys():
-                        print(f"{Format.CYAN} Computer Name: {Format.END} {str(vm['properties']['osProfile']['computerName'])}")
-                        print(f"{Format.CYAN} Admin Username: {Format.END} {str(vm['properties']['osProfile']['adminUsername'])}")
+                        print(f"{Format.CYAN} Computer Name: {Format.END}{str(vm['properties']['osProfile']['computerName'])}")
+                        print(f"{Format.CYAN} Admin Username: {Format.END}{str(vm['properties']['osProfile']['adminUsername'])}")
                     if "networkProfile" in vm["properties"].keys():
                         for networkinterface in vm["properties"]["networkProfile"]["networkInterfaces"]:
                             self.__get_network_interface(str(networkinterface["id"]))
@@ -112,9 +112,9 @@ class VMs():
             response = self.request.do_request(self.auth.arm_access_token, url, "GET", None)
             if response.status_code == 200:
                 vms_data = json.loads(response.content.decode('utf-8'))
-                print(f'\n{Format.BOLD_START}{Format.YELLOW} {vmname} {Format.END}')
-                print(f"{Format.CYAN} Resource Group: {Format.END} {resourcegroup}")
-                print(f"{Format.CYAN} Actions: {Format.END}")
+                print(f'\n{Format.BOLD_START}{Format.YELLOW}{vmname} {Format.END}')
+                print(f"{Format.CYAN} Resource Group: {Format.END}{resourcegroup}")
+                print(f"{Format.CYAN} Actions:{Format.END}")
                 for data in vms_data["value"]:
                     print(f"{Format.PURPLE}  {data['actions']}{Format.END}")
             elif response.status_code == 403:
@@ -158,10 +158,10 @@ class VMs():
                         if response_async.status_code == 200:
                             command_result = json.loads(response_async.content.decode('utf-8'))
                             if command_result["status"] == "Succeeded":
-                                print(f'\n{Format.CYAN}Name: {Format.END} {command_result["name"]}')
-                                print(f"{Format.CYAN}Status: {Format.END} {command_result['status']}")
-                                print(f"{Format.CYAN}Start Time: {Format.END} {command_result['startTime']}")
-                                print(f"{Format.CYAN}End Time: {Format.END} {command_result['endTime']}")
+                                print(f'\n{Format.CYAN}Name: {Format.END}{command_result["name"]}')
+                                print(f"{Format.CYAN}Status: {Format.END}{command_result['status']}")
+                                print(f"{Format.CYAN}Start Time: {Format.END}{command_result['startTime']}")
+                                print(f"{Format.CYAN}End Time: {Format.END}{command_result['endTime']}")
                                 command_output = command_result["properties"]["output"]["value"]
                                 print(f"{Format.CYAN}Output:\n{Format.END}")
                                 for output_res in command_output:
