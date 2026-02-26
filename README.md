@@ -40,6 +40,8 @@ Example:
 ```
 ## Installation
 
+**Requires Python ≥ 3.9** 
+
 ```
 pip install azshell
 azshell -h

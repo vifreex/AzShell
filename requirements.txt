@@ -1,4 +1,4 @@
 msal
-cmd2
+cmd2==2.7.0
 argparse
 bs4
